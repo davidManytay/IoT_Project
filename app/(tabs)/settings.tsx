@@ -82,6 +82,7 @@ export default function SettingsScreen() {
 
   const [newRule, setNewRule] = useState<Omit<AlertRule, 'id'>>({
     label: '',
+    type: 'simple',
     sensorType: 'temperature',
     operator: '>',
     value: 30
@@ -91,7 +92,7 @@ export default function SettingsScreen() {
     if (!newRule.label) return;
     addRule(newRule);
     setModalVisible(false);
-    setNewRule({ label: '', sensorType: 'temperature', operator: '>', value: 30 });
+    setNewRule({ label: '', type: 'simple', sensorType: 'temperature', operator: '>', value: 30 });
   };
 
   return (
