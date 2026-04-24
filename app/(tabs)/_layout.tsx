@@ -125,11 +125,8 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#555',
         headerStyle: {
           backgroundColor: Colors[theme].header,
-          borderBottomWidth: 1,
-          borderBottomColor: Colors[theme].border,
-          elevation: 0,
-          shadowOpacity: 0,
         },
+        headerShadowVisible: false,
         headerTitleStyle: {
           color: Colors[theme].headerText,
           fontWeight: 'bold',

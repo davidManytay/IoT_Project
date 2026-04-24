@@ -61,9 +61,8 @@ function RootLayoutNav() {
         screenOptions={{
           headerStyle: {
             backgroundColor: Colors[theme].header,
-            borderBottomWidth: 1,
-            borderBottomColor: Colors[theme].border,
           },
+          headerShadowVisible: true,
           headerTitleStyle: {
             color: Colors[theme].headerText,
             fontWeight: 'bold',
