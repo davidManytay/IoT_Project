@@ -102,9 +102,12 @@ export default function DashboardScreen() {
               <FontAwesome name="thermometer-half" size={12} color="#ff6b6b" style={{ marginRight: 6 }} />
               <Text style={[styles.label, { color: Colors[theme].subtext }]}>Temperature</Text>
             </View>
-            <View style={[styles.trendBadge, { backgroundColor: '#ff6b6b20' }]}>
-              {isTempNear && <FontAwesome name="warning" size={10} color="#ff6b6b" style={{ position: 'absolute', top: -5, right: -5 }} />}
-              <FontAwesome name="line-chart" size={10} color="#ff6b6b" />
+            <View style={[styles.trendBadge, { backgroundColor: isTempNear ? '#ff6b6b30' : '#ff6b6b10' }]}>
+              {isTempNear ? (
+                <FontAwesome name="warning" size={10} color="#ff6b6b" />
+              ) : (
+                <FontAwesome name="line-chart" size={10} color="#ff6b6b" />
+              )}
             </View>
           </View>
           <View style={styles.valueRow}>
@@ -131,9 +134,12 @@ export default function DashboardScreen() {
               <FontAwesome name="tint" size={12} color="#4dabf7" style={{ marginRight: 6 }} />
               <Text style={[styles.label, { color: Colors[theme].subtext }]}>Humidity</Text>
             </View>
-            <View style={[styles.trendBadge, { backgroundColor: '#4dabf720' }]}>
-              {isHumNear && <FontAwesome name="warning" size={10} color="#ff6b6b" style={{ position: 'absolute', top: -5, right: -5 }} />}
-              <FontAwesome name="line-chart" size={10} color="#4dabf7" />
+            <View style={[styles.trendBadge, { backgroundColor: isHumNear ? '#ff6b6b30' : '#4dabf710' }]}>
+              {isHumNear ? (
+                <FontAwesome name="warning" size={10} color="#ff6b6b" />
+              ) : (
+                <FontAwesome name="line-chart" size={10} color="#4dabf7" />
+              )}
             </View>
           </View>
           <View style={styles.valueRow}>

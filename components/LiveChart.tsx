@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Dimensions, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Dimensions, StyleSheet, Animated } from 'react-native';
 import Svg, { Path, Defs, LinearGradient, Stop, Line, Circle } from 'react-native-svg';
 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -15,8 +15,8 @@ interface LiveChartProps {
 }
 
 /**
- * LiveChart: A custom SVG-based line chart with smooth Bézier curves.
- * Demonstrates manual coordinate mapping and gradient rendering.
+ * LiveChart: A premium custom SVG-based line chart.
+ * Features: Cinematic neon glow, pulsing live indicator, and professional gradients.
  */
 export const LiveChart: React.FC<LiveChartProps> = ({ 
   data, 
@@ -32,6 +32,26 @@ export const LiveChart: React.FC<LiveChartProps> = ({
   // Adjust width based on typical card padding
   const chartWidth = screenWidth - 72; 
   
+  // Animation for the pulsing dot
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.6,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, []);
+
   if (data.length < 2) return <View style={[styles.placeholder, { height, backgroundColor: Colors[theme].placeholder }]} />;
 
 
@@ -57,7 +77,6 @@ export const LiveChart: React.FC<LiveChartProps> = ({
 
 
   // Generate smooth path using Bézier curve logic
-  // Simple technique: cubic curve segments
   let d = `M ${points[0].x} ${points[0].y}`;
   
   for (let i = 0; i < points.length - 1; i++) {
@@ -73,14 +92,15 @@ export const LiveChart: React.FC<LiveChartProps> = ({
     <View style={styles.container}>
       <Svg height={height} width={chartWidth}>
         <Defs>
-          <LinearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor={color} stopOpacity="0.4" />
-            <Stop offset="1" stopColor={color} stopOpacity="0.01" />
+          <LinearGradient id="gradientFill" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor={color} stopOpacity="0.3" />
+            <Stop offset="0.5" stopColor={color} stopOpacity="0.1" />
+            <Stop offset="1" stopColor={color} stopOpacity="0" />
           </LinearGradient>
         </Defs>
 
-        {/* Background Grid */}
-        {[0, 0.25, 0.5, 0.75, 1].map((p) => (
+        {/* Background Grid - Ultra Subtle */}
+        {[0, 0.5, 1].map((p) => (
           <Line
             key={`grid-${p}`}
             x1="0"
@@ -89,36 +109,63 @@ export const LiveChart: React.FC<LiveChartProps> = ({
             y2={padding + p * usableHeight}
             stroke={Colors[theme].border}
             strokeWidth="0.5"
-            strokeDasharray="4,4"
+            opacity={0.3}
           />
         ))}
 
+        {/* Faded Fill Area */}
         <Path
           d={fillPath}
-          fill="url(#gradient)"
+          fill="url(#gradientFill)"
         />
+
+        {/* The Glow Effect (Thick secondary line for light bleed) */}
         <Path
           d={d}
           fill="none"
           stroke={color}
-          strokeWidth="3"
+          strokeWidth="6"
+          opacity={0.15}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
 
-        {/* Pulse Dot at current value */}
+        {/* The Main Sharp Line */}
+        <Path
+          d={d}
+          fill="none"
+          stroke={color}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        {/* Live Pulse Indicator at current value */}
         {points.length > 0 && (
-          <Circle
-            cx={points[points.length - 1].x}
-            cy={points[points.length - 1].y}
-            r="4"
-            fill={color}
-          />
+          <>
+            <AnimatedCircle
+              cx={points[points.length - 1].x}
+              cy={points[points.length - 1].y}
+              r={Animated.multiply(pulseAnim, 6)}
+              fill={color}
+              opacity={0.3}
+            />
+            <Circle
+              cx={points[points.length - 1].x}
+              cy={points[points.length - 1].y}
+              r="3.5"
+              fill={color}
+              stroke="#fff"
+              strokeWidth="1"
+            />
+          </>
         )}
       </Svg>
     </View>
   );
 };
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 const styles = StyleSheet.create({
   container: {
