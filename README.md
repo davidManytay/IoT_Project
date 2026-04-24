@@ -3,10 +3,15 @@
 IoT Sentinel is a sensor simulation dashboard designed for monitoring industrial data. It is built using React Native and Expo.
 
 ## Features
-- Real-time charts for temperature and humidity data.
-- Rule engine for custom alerts (simple, compound, and rate of change).
-- User profile management with photo upload.
-- Local persistence so data and settings are saved.
+- Real-time animated charts for temperature and humidity tracking.
+- Advanced rule engine for alerts (simple, compound logic, and rate of change).
+- Live pulse indicators and visual warning effects for sensor breaches.
+- Haptic feedback notifications for critical system alerts.
+- Adjustable Gaussian parameters (mean and standard deviation) for simulation.
+- Trend detection badges to show if values are rising or falling.
+- User profile management with editable name and photo upload.
+- Full local persistence for rules, alerts, and user settings using AsyncStorage.
+- Comprehensive unit tests for all core mathematical and logic components.
 
 ## Technical Details
 The project uses the Box-Muller transform to generate Gaussian noise for sensor data. This provides a more realistic simulation than standard random number generators. 

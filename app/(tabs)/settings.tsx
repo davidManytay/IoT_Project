@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, Modal, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, Modal, KeyboardAvoidingView, Platform, Image, Switch } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useStore } from '@/src/store/useStore';
 import { FontAwesome } from '@expo/vector-icons';
@@ -54,7 +54,9 @@ export default function SettingsScreen() {
     profileImage,
     setProfileImage,
     userName,
-    setUserName
+    setUserName,
+    voiceEnabled,
+    setVoiceEnabled
   } = useStore();
   
   const theme = userTheme === 'system' ? (systemColorScheme ?? 'dark') : userTheme;
@@ -292,6 +294,29 @@ export default function SettingsScreen() {
                 </TouchableOpacity>
               </View>
 
+              <Text style={styles.modalLabel}>THRESHOLD VALUE</Text>
+              <TextInput
+                style={[styles.modalInput, { backgroundColor: Colors[theme].background, color: Colors[theme].text, borderColor: Colors[theme].border }]}
+                value={newRule.value?.toString()}
+                keyboardType="numeric"
+                placeholder="e.g. 30"
+                placeholderTextColor="#666"
+                onChangeText={(t) => setNewRule({...newRule, value: parseFloat(t) || 0})}
+              />
+
+              <Text style={styles.modalLabel}>LOGICAL OPERATOR</Text>
+              <View style={styles.modalPicker}>
+                {(['>', '<', '='] as const).map((op) => (
+                  <TouchableOpacity 
+                    key={op}
+                    style={[styles.pickerItem, newRule.operator === op && styles.pickerItemActive]}
+                    onPress={() => setNewRule({...newRule, operator: op})}
+                  >
+                    <Text style={[styles.pickerText, newRule.operator === op && { color: '#fff' }]}>{op}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
               <View style={styles.modalActions}>
                 <TouchableOpacity style={styles.cancelAction} onPress={() => setModalVisible(false)}>
                   <Text style={styles.cancelText}>CANCEL</Text>
@@ -303,6 +328,50 @@ export default function SettingsScreen() {
             </View>
           </View>
         </Modal>
+
+        {/* System Settings */}
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionLabel, { color: Colors[theme].subtext }]}>System Configuration</Text>
+          <View style={styles.sectionLine} />
+        </View>
+
+        <View style={[styles.settingCard, { backgroundColor: Colors[theme].card, borderColor: Colors[theme].border }]}>
+          <View style={[styles.settingItem, { borderBottomColor: 'rgba(255,255,255,0.05)' }]}>
+            <View style={styles.settingTextGroup}>
+              <Text style={[styles.settingLabelText, { color: Colors[theme].text }]}>Voice Alerts</Text>
+              <Text style={styles.settingSubLabel}>Announce breaches via text-to-speech</Text>
+            </View>
+            <Switch
+              value={voiceEnabled}
+              onValueChange={setVoiceEnabled}
+              trackColor={{ false: '#333', true: '#ff4d4d' }}
+              thumbColor={voiceEnabled ? '#fff' : '#f4f3f4'}
+            />
+          </View>
+
+          <View style={styles.settingItem}>
+            <View style={styles.settingTextGroup}>
+              <Text style={[styles.settingLabelText, { color: Colors[theme].text }]}>Interface Theme</Text>
+              <Text style={styles.settingSubLabel}>Toggle between light and dark modes</Text>
+            </View>
+            <View style={styles.themePicker}>
+              {(['light', 'dark', 'system'] as const).map((t) => (
+                <TouchableOpacity 
+                  key={t}
+                  onPress={() => setTheme(t)}
+                  style={[
+                    styles.themeBtn, 
+                    userTheme === t && { backgroundColor: '#ff4d4d' }
+                  ]}
+                >
+                  <Text style={[styles.themeBtnText, userTheme === t && { color: '#fff' }]}>
+                    {t.toUpperCase()}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </View>
 
         <View style={{ height: 60 }} />
       </ScrollView>
@@ -402,5 +471,14 @@ const styles = StyleSheet.create({
   cancelAction: { padding: 14 },
   cancelText: { color: '#666', fontWeight: 'bold' },
   saveAction: { backgroundColor: '#ff4d4d', paddingHorizontal: 20, paddingVertical: 14, borderRadius: 12 },
-  saveText: { color: '#fff', fontWeight: 'bold' }
+  saveText: { color: '#fff', fontWeight: 'bold' },
+  
+  settingCard: { borderRadius: 20, borderWidth: 1, paddingHorizontal: 20, marginBottom: 20 },
+  settingItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 20, borderBottomWidth: 1 },
+  settingTextGroup: { flex: 1 },
+  settingLabelText: { fontSize: 14, fontWeight: 'bold' },
+  settingSubLabel: { fontSize: 10, color: '#666', marginTop: 2 },
+  themePicker: { flexDirection: 'row', gap: 6 },
+  themeBtn: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  themeBtnText: { fontSize: 8, fontWeight: '900', color: '#666' }
 });

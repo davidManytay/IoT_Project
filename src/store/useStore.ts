@@ -5,6 +5,7 @@ import { CircularBuffer } from '../logic/CircularBuffer';
 import { SensorReading, generateGaussianSensorData } from '../logic/sensorUtils';
 import { AlertRule, TriggeredAlert, evaluateRule } from '../logic/RuleEngine';
 import * as Haptics from 'expo-haptics';
+import * as Speech from 'expo-speech';
 import { Platform } from 'react-native';
 
 interface SimulationConfig {
@@ -27,6 +28,7 @@ interface DashboardState {
   userTheme: 'light' | 'dark' | 'system';
   profileImage: string | null;
   userName: string;
+  voiceEnabled: boolean;
 
   // Actions
   addReading: (type: 'temperature' | 'humidity') => void;
@@ -39,6 +41,7 @@ interface DashboardState {
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
   setProfileImage: (uri: string | null) => void;
   setUserName: (name: string) => void;
+  setVoiceEnabled: (enabled: boolean) => void;
 }
 
 
@@ -70,6 +73,7 @@ export const useStore = create<DashboardState>()(
       userTheme: 'system',
       profileImage: null,
       userName: 'John Doe',
+      voiceEnabled: true,
 
 
       addReading: (type) => {
@@ -117,6 +121,9 @@ export const useStore = create<DashboardState>()(
               // Trigger High-End Sensory Feedback
               if (Platform.OS !== 'web') {
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                if (get().voiceEnabled) {
+                  Speech.speak(`Alert: ${newAlert.label}`, { rate: 0.9, pitch: 1.0 });
+                }
               }
             }
           }
@@ -144,6 +151,7 @@ export const useStore = create<DashboardState>()(
       setTheme: (theme) => set({ userTheme: theme }),
       setProfileImage: (uri) => set({ profileImage: uri }),
       setUserName: (name) => set({ userName: name }),
+      setVoiceEnabled: (enabled) => set({ voiceEnabled: enabled }),
 
       resetSimulation: () => {
         const newTemp = new CircularBuffer<number>(BUFFER_SIZE);
@@ -165,7 +173,8 @@ export const useStore = create<DashboardState>()(
         isPaused: state.isPaused,
         userTheme: state.userTheme,
         profileImage: state.profileImage,
-        userName: state.userName
+        userName: state.userName,
+        voiceEnabled: state.voiceEnabled
       }),
     }
   )
