@@ -307,7 +307,7 @@ export default function SettingsScreen() {
 
               <Text style={styles.modalLabel}>LOGICAL OPERATOR</Text>
               <View style={styles.modalPicker}>
-                {(['>', '<', '='] as const).map((op) => (
+                {(['>', '<', '=='] as const).map((op) => (
                   <TouchableOpacity 
                     key={op}
                     style={[styles.pickerItem, newRule.operator === op && styles.pickerItemActive]}
