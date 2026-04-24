@@ -52,11 +52,15 @@ export default function SettingsScreen() {
     removeRule, 
     resetSimulation,
     profileImage,
-    setProfileImage
+    setProfileImage,
+    userName,
+    setUserName
   } = useStore();
   
   const theme = userTheme === 'system' ? (systemColorScheme ?? 'dark') : userTheme;
   const [modalVisible, setModalVisible] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState('');
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -113,7 +117,29 @@ export default function SettingsScreen() {
             </TouchableOpacity>
             
             <View style={styles.identityText}>
-              <Text style={[styles.identityName, { color: Colors[theme].text }]}>John Doe</Text>
+              {isEditingName ? (
+                <TextInput
+                  style={[styles.identityNameInput, { color: Colors[theme].text, borderBottomColor: Colors[theme].tint }]}
+                  value={tempName}
+                  onChangeText={setTempName}
+                  autoFocus
+                  onBlur={() => {
+                    if (tempName.trim()) setUserName(tempName.trim());
+                    setIsEditingName(false);
+                  }}
+                  onSubmitEditing={() => {
+                    if (tempName.trim()) setUserName(tempName.trim());
+                    setIsEditingName(false);
+                  }}
+                />
+              ) : (
+                <TouchableOpacity onPress={() => {
+                  setTempName(userName);
+                  setIsEditingName(true);
+                }}>
+                  <Text style={[styles.identityName, { color: Colors[theme].text }]}>{userName}</Text>
+                </TouchableOpacity>
+              )}
               <Text style={styles.identityRole}>CHIEF SENTINEL OPERATOR</Text>
               <View style={styles.idBadge}>
                 <Text style={styles.idText}>ID: SN-772-ALPHA</Text>
@@ -323,6 +349,7 @@ const styles = StyleSheet.create({
   },
   identityText: { flex: 1 },
   identityName: { fontSize: 20, fontWeight: '900', letterSpacing: 0.5 },
+  identityNameInput: { fontSize: 20, fontWeight: '900', letterSpacing: 0.5, borderBottomWidth: 1, paddingVertical: 0 },
   identityRole: { fontSize: 9, fontWeight: '900', color: '#ff4d4d', letterSpacing: 1.5, marginTop: 2 },
   idBadge: {
     backgroundColor: 'rgba(255, 77, 77, 0.1)',

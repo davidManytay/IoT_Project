@@ -26,6 +26,7 @@ interface DashboardState {
   isPaused: boolean;
   userTheme: 'light' | 'dark' | 'system';
   profileImage: string | null;
+  userName: string;
 
   // Actions
   addReading: (type: 'temperature' | 'humidity') => void;
@@ -37,6 +38,7 @@ interface DashboardState {
   resetSimulation: () => void;
   setTheme: (theme: 'light' | 'dark' | 'system') => void;
   setProfileImage: (uri: string | null) => void;
+  setUserName: (name: string) => void;
 }
 
 
@@ -67,6 +69,7 @@ export const useStore = create<DashboardState>()(
       isPaused: false,
       userTheme: 'system',
       profileImage: null,
+      userName: 'John Doe',
 
 
       addReading: (type) => {
@@ -140,6 +143,7 @@ export const useStore = create<DashboardState>()(
 
       setTheme: (theme) => set({ userTheme: theme }),
       setProfileImage: (uri) => set({ profileImage: uri }),
+      setUserName: (name) => set({ userName: name }),
 
       resetSimulation: () => {
         const newTemp = new CircularBuffer<number>(BUFFER_SIZE);
@@ -160,7 +164,8 @@ export const useStore = create<DashboardState>()(
         config: state.config,
         isPaused: state.isPaused,
         userTheme: state.userTheme,
-        profileImage: state.profileImage
+        profileImage: state.profileImage,
+        userName: state.userName
       }),
     }
   )
